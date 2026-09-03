@@ -74,14 +74,17 @@ class AssessmentResultScreen extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    deficiency.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppTheme.textPrimary,
+                                  Expanded(
+                                    child: Text(
+                                      deficiency.name,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800,
+                                        color: AppTheme.textPrimary,
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
                                   _buildRiskChip(deficiency.riskLevel),
                                 ],
                               ),

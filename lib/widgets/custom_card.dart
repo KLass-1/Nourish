@@ -19,26 +19,25 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget card = Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor, width: 1.0),
-      ),
-      child: Padding(
-        padding: padding,
-        child: child,
-      ),
+    final content = Padding(
+      padding: padding,
+      child: child,
     );
 
-    if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
+    return Material(
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        child: card,
-      );
-    }
-
-    return card;
+        side: BorderSide(color: borderColor, width: 1.0),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: onTap != null
+          ? InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: content,
+            )
+          : content,
+    );
   }
 }

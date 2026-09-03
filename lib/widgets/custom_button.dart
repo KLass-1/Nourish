@@ -29,12 +29,17 @@ class CustomButton extends StatelessWidget {
           Icon(icon, size: 18),
           const SizedBox(width: 8),
         ],
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: isSecondary ? AppTheme.primary : Colors.white,
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isSecondary ? AppTheme.primary : Colors.white,
+            ),
           ),
         ),
       ],
@@ -77,7 +82,7 @@ class CustomButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     );
   }
 
@@ -90,7 +95,7 @@ class CustomButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     );
   }
 }

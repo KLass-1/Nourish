@@ -58,46 +58,53 @@ class ProgressScreen extends StatelessWidget {
                       height: 140,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: weeklyHydration.map((dayData) {
                           final double percentHeight = (dayData.amountMl / maxIntake).clamp(0.0, 1.0);
                           final isToday = dayData.dayLabel == 'Today';
                           final isGoalMet = dayData.amountMl >= waterGoal;
 
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${dayData.amountMl}',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w700,
-                                  color: isToday ? AppTheme.secondary : AppTheme.textLight,
+                          return Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    '${dayData.amountMl}',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      color: isToday ? AppTheme.secondary : AppTheme.textLight,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 6),
-                              // Vertical Bar
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                width: 22,
-                                height: 80 * percentHeight,
-                                decoration: BoxDecoration(
-                                  color: isToday
-                                      ? AppTheme.secondary
-                                      : (isGoalMet ? AppTheme.secondary.withOpacity(0.6) : AppTheme.secondary.withOpacity(0.35)),
-                                  borderRadius: BorderRadius.circular(4),
+                                const SizedBox(height: 6),
+                                // Vertical Bar
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  width: 18,
+                                  height: 80 * percentHeight,
+                                  decoration: BoxDecoration(
+                                    color: isToday
+                                        ? AppTheme.secondary
+                                        : (isGoalMet ? AppTheme.secondary.withOpacity(0.6) : AppTheme.secondary.withOpacity(0.35)),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                dayData.dayLabel,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: isToday ? FontWeight.w800 : FontWeight.w500,
-                                  color: isToday ? AppTheme.secondary : AppTheme.textSecondary,
+                                const SizedBox(height: 8),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    dayData.dayLabel,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: isToday ? FontWeight.w800 : FontWeight.w500,
+                                      color: isToday ? AppTheme.secondary : AppTheme.textSecondary,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         }).toList(),
                       ),
@@ -109,9 +116,11 @@ class ProgressScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildTrendMetric(label: 'Avg Daily Intake', value: '2,110 ml'),
-                        _buildTrendMetric(label: 'Weekly Goal Met', value: '5 / 7 Days'),
-                        _buildTrendMetric(label: 'Consistency', value: '82%'),
+                        Expanded(child: _buildTrendMetric(label: 'Avg Daily Intake', value: '2,110 ml')),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildTrendMetric(label: 'Weekly Goal Met', value: '5 / 7 Days')),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildTrendMetric(label: 'Consistency', value: '82%')),
                       ],
                     ),
                   ],
@@ -135,6 +144,7 @@ class ProgressScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CustomCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -142,9 +152,13 @@ class ProgressScreen extends StatelessWidget {
                             children: [
                               Icon(Icons.bedtime_rounded, color: Colors.indigo.shade400, size: 16),
                               const SizedBox(width: 8),
-                              const Text(
-                                'Sleep Quality',
-                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.textPrimary),
+                              const Expanded(
+                                child: Text(
+                                  'Sleep Quality',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.textPrimary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
@@ -164,6 +178,7 @@ class ProgressScreen extends StatelessWidget {
                   const SizedBox(width: 14),
                   Expanded(
                     child: CustomCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -171,9 +186,13 @@ class ProgressScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.wb_sunny_rounded, color: Colors.amber, size: 16),
                               const SizedBox(width: 8),
-                              const Text(
-                                'Sunlight Index',
-                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.textPrimary),
+                              const Expanded(
+                                child: Text(
+                                  'Sunlight Index',
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.textPrimary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
@@ -198,15 +217,20 @@ class ProgressScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Assessment History',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.textPrimary,
-                      letterSpacing: -0.2,
+                  const Expanded(
+                    child: Text(
+                      'Assessment History',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '${history.length} scans',
                     style: const TextStyle(
@@ -268,6 +292,8 @@ class ProgressScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w700,
                                       color: AppTheme.textPrimary,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     _formatDate(record.dateTime),
@@ -306,6 +332,8 @@ class ProgressScreen extends StatelessWidget {
             color: AppTheme.textLight,
             fontWeight: FontWeight.w600,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 2),
         Text(
@@ -315,6 +343,8 @@ class ProgressScreen extends StatelessWidget {
             fontWeight: FontWeight.w800,
             color: AppTheme.textPrimary,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

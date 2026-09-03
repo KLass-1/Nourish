@@ -139,12 +139,14 @@ class RecommendationsScreen extends StatelessWidget {
           child: Icon(icon, color: iconColor, size: 20),
         ),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.textPrimary,
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.textPrimary,
+            ),
           ),
         ),
       ],

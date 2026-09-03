@@ -79,43 +79,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (context, index) {
                   final page = _pages[index];
                   return Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Circle Icon Container
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryLight,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            page.icon,
-                            size: 56,
-                            color: AppTheme.primary,
-                          ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                    child: Center(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Circle Icon Container
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: const BoxDecoration(
+                                color: AppTheme.primaryLight,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                page.icon,
+                                size: 56,
+                                color: AppTheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 36),
+                            
+                            // Heading
+                            Text(
+                              page.title,
+                              style: Theme.of(context).textTheme.headlineLarge,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            
+                            // Description
+                            Text(
+                              page.description,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: AppTheme.textSecondary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 48),
-                        
-                        // Heading
-                        Text(
-                          page.title,
-                          style: Theme.of(context).textTheme.headlineLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Description
-                        Text(
-                          page.description,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                      ),
                     ),
                   );
                 },

@@ -63,9 +63,9 @@ class ProfileScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildStatItem('Age', '${state.age} yrs'),
-                        _buildStatItem('Height', '${state.height.toInt()} cm'),
-                        _buildStatItem('Weight', '${state.weight.toInt()} kg'),
+                        Expanded(child: _buildStatItem('Age', '${state.age} yrs')),
+                        Expanded(child: _buildStatItem('Height', '${state.height.toInt()} cm')),
+                        Expanded(child: _buildStatItem('Weight', '${state.weight.toInt()} kg')),
                       ],
                     ),
                   ],
@@ -192,6 +192,9 @@ class ProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.w800,
             color: AppTheme.textPrimary,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 2),
         Text(
@@ -201,6 +204,9 @@ class ProfileScreen extends StatelessWidget {
             color: AppTheme.textLight,
             fontWeight: FontWeight.w500,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -324,6 +330,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
+                      isExpanded: true,
                       initialValue: tempDiet,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -332,7 +339,7 @@ class ProfileScreen extends StatelessWidget {
                       items: MockData.dietTypes.map((diet) {
                         return DropdownMenuItem(
                           value: diet,
-                          child: Text(diet),
+                          child: Text(diet, overflow: TextOverflow.ellipsis),
                         );
                       }).toList(),
                       onChanged: (val) {

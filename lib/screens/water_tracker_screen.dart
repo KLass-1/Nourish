@@ -142,14 +142,19 @@ class WaterTrackerScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Today\'s Consumption Log',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textPrimary,
+                        const Expanded(
+                          child: Text(
+                            'Today\'s Consumption Log',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Text(
                           '${todayLogs.length} logs',
                           style: const TextStyle(
@@ -276,6 +281,8 @@ class WaterTrackerScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: AppTheme.textPrimary,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

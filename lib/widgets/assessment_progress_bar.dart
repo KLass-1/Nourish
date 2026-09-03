@@ -21,14 +21,19 @@ class AssessmentProgressBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Step $currentStep of $totalSteps',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primary,
+            Expanded(
+              child: Text(
+                'Step $currentStep of $totalSteps',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.primary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               '${((currentStep / totalSteps) * 100).toInt()}% Complete',
               style: const TextStyle(

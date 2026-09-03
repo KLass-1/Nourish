@@ -247,6 +247,8 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
                     child: Center(
                       child: Text(
                         gender,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -687,20 +689,26 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppTheme.textSecondary,
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppTheme.textPrimary,
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

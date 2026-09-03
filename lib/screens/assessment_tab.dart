@@ -56,14 +56,19 @@ class AssessmentTab extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Active Health Profile',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.primaryDark,
+                          const Expanded(
+                            child: Text(
+                              'Active Health Profile',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.primaryDark,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Text(
                             _formatDate(lastResult.dateTime),
                             style: const TextStyle(
@@ -80,8 +85,10 @@ class AssessmentTab extends StatelessWidget {
                         style: TextStyle(fontSize: 13, color: AppTheme.textSecondary, height: 1.4),
                       ),
                       const SizedBox(height: 14),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        spacing: 8,
+                        runSpacing: 4,
                         children: [
                           TextButton(
                             onPressed: () {
@@ -222,12 +229,14 @@ class AssessmentTab extends StatelessWidget {
                     children: [
                       Icon(icon, size: 16, color: AppTheme.textSecondary),
                       const SizedBox(width: 6),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.textPrimary,
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.textPrimary,
+                          ),
                         ),
                       ),
                     ],

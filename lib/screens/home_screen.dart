@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               const Text(
-                'Let\'s check your wellness indicators today.',
+                'Let\'s see how you\'re doing today.',
                 style: TextStyle(
                   fontSize: 14,
                   color: AppTheme.textSecondary,
@@ -81,19 +81,21 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 14),
-                        const Text(
-                          'How are you feeling today?',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textPrimary,
+                        const Expanded(
+                          child: Text(
+                            'How are you feeling today?',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary,
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 14),
                     const Text(
-                      'Complete our quick 4-step assessment to scan for potential nutritional deficiencies and receive personalized recommendations.',
+                      'Take a quick 4-step health check to find possible nutrient gaps and get personal tips.',
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
@@ -102,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     CustomButton(
-                      text: 'Start Deficiency Detection Test',
+                      text: 'Start Health Check',
                       onPressed: () {
                         // Clear previous state and push full screen assessment flow
                         state.clearCurrentAssessment();
@@ -132,6 +134,7 @@ class HomeScreen extends StatelessWidget {
                   // Water Intake Tracker Card
                   Expanded(
                     child: CustomCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.waterTracker);
                       },
@@ -141,14 +144,19 @@ class HomeScreen extends StatelessWidget {
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Water Intake',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.textPrimary,
+                              Expanded(
+                                child: Text(
+                                  'Water Intake',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              SizedBox(width: 4),
                               Icon(
                                 Icons.water_drop_rounded,
                                 color: AppTheme.secondary,
@@ -194,20 +202,26 @@ class HomeScreen extends StatelessWidget {
                   // Daily Activity Summary Card
                   Expanded(
                     child: CustomCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Sleep & Activity',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.textPrimary,
+                              Expanded(
+                                child: Text(
+                                  'Sleep & Activity',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              SizedBox(width: 4),
                               Icon(
                                 Icons.bedtime_outlined,
                                 color: Colors.indigo,
@@ -231,6 +245,8 @@ class HomeScreen extends StatelessWidget {
                               color: AppTheme.textLight,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 14),
                           Row(
@@ -278,14 +294,19 @@ class HomeScreen extends StatelessWidget {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Last Deficiency Assessment',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textPrimary,
+                        Expanded(
+                          child: Text(
+                            'Last Deficiency Assessment',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        SizedBox(width: 4),
                         Icon(
                           Icons.assignment_turned_in_rounded,
                           color: AppTheme.primary,
@@ -324,12 +345,15 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          Text(
-                            _formatDate(state.lastAssessmentResult!.dateTime),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.textLight,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              _formatDate(state.lastAssessmentResult!.dateTime),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.textLight,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -466,6 +490,8 @@ class HomeScreen extends StatelessWidget {
                   color: AppTheme.textPrimary,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
