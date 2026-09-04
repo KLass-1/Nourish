@@ -36,7 +36,7 @@ class AssessmentTab extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Understand your physical symptoms and identify potential nutritional deficiencies by completing a comprehensive lifestyle and health review.',
+                'Answer a few simple questions about your health, food habits, and lifestyle to find possible nutrient gaps.',
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.4,
@@ -124,7 +124,7 @@ class AssessmentTab extends StatelessWidget {
               _buildTimelineStep(
                 stepNum: '1',
                 title: 'Biometrics & Profile',
-                description: 'Age, gender, and physical details which set baseline nutritional thresholds.',
+                description: 'Basic information like your age, gender, height and weight.',
                 icon: Icons.person_outline_rounded,
               ),
               _buildTimelineStep(
@@ -136,7 +136,7 @@ class AssessmentTab extends StatelessWidget {
               _buildTimelineStep(
                 stepNum: '3',
                 title: 'Symptom Log',
-                description: 'Physical expressions such as fatigue, hair fall, pale skin, dry skin, and muscle aches.',
+                description: 'Common symptoms such as fatigue, hair fall, pale skin, dry skin, and muscle aches.',
                 icon: Icons.healing_outlined,
               ),
               _buildTimelineStep(

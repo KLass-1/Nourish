@@ -134,7 +134,10 @@ class HomeScreen extends StatelessWidget {
                   // Water Intake Tracker Card
                   Expanded(
                     child: CustomCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.waterTracker);
                       },
@@ -202,7 +205,10 @@ class HomeScreen extends StatelessWidget {
                   // Daily Activity Summary Card
                   Expanded(
                     child: CustomCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -17,17 +17,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingPageData> _pages = [
     OnboardingPageData(
       title: 'Know Your Nutrition',
-      description: 'Understand possible nutritional concerns based on your symptoms, diet, and lifestyle habits.',
+      description: 'Learn about possible nutrient gaps based on your symptoms, food habits and lifestyle.',
       icon: Icons.search_rounded,
     ),
     OnboardingPageData(
       title: 'Build Better Habits',
-      description: 'Get personalized dietary suggestions and lifestyle guidance tailored to your specific wellness needs.',
+      description: 'Get simple food and lifestyle tips based on your health needs.',
       icon: Icons.favorite_rounded,
     ),
     OnboardingPageData(
       title: 'Track Your Progress',
-      description: 'Monitor daily water intake, assess healthy lifestyle patterns, and log your progress over time.',
+      description: 'Keep track of your water, sleep, activity and progress.',
       icon: Icons.show_chart_rounded,
     ),
   ];
