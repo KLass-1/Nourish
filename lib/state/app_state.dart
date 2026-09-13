@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/assessment_model.dart';
 import '../models/water_log_model.dart';
 import '../data/mock_data.dart';
+import '../services/health_check_service.dart';
 
 class AppState extends ChangeNotifier {
   // Profile settings
@@ -132,8 +133,22 @@ class AppState extends ChangeNotifier {
   }
 
   // Assessment Actions
+  Future<void> submitAssessmentAsync({HealthCheckService? service}) async {
+    final healthService = service ?? HealthCheckService();
+    final risks = await healthService.analyzeHealth(currentAssessment);
+
+    final result = AssessmentResult(
+      dateTime: DateTime.now(),
+      deficiencies: risks,
+    );
+
+    _assessmentHistory.insert(0, result);
+    lastAssessmentResult = result;
+    notifyListeners();
+  }
+
   void submitAssessment() {
-    // Calculate risks based on answers
+    // Offline / fallback calculation based on answers
     final risks = MockData.calculateRisks(currentAssessment);
     
     // Create new result

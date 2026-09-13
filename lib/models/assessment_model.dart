@@ -61,18 +61,51 @@ class AssessmentAnswers {
     sunlightExposure = '15-30 mins';
     symptoms.clear();
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'age': age,
+      'gender': gender,
+      'height': height,
+      'weight': weight,
+      'dietType': dietType,
+      'waterIntake': waterIntake,
+      'sleepDuration': sleepDuration,
+      'exerciseFrequency': exerciseFrequency,
+      'sunlightExposure': sunlightExposure,
+      'symptoms': symptoms,
+    };
+  }
 }
 
 class DeficiencyRisk {
   final String name;
   final String riskLevel; // 'High', 'Moderate', 'Low'
   final String description;
+  final List<String> suggestions;
 
   DeficiencyRisk({
     required this.name,
     required this.riskLevel,
     required this.description,
+    this.suggestions = const [],
   });
+
+  factory DeficiencyRisk.fromJson(Map<String, dynamic> json) {
+    List<String> parsedSuggestions = [];
+    if (json['suggestions'] is List) {
+      parsedSuggestions = (json['suggestions'] as List)
+          .map((item) => item.toString())
+          .toList();
+    }
+
+    return DeficiencyRisk(
+      name: json['nutrient']?.toString() ?? json['name']?.toString() ?? 'Nutrient',
+      riskLevel: json['risk']?.toString() ?? json['riskLevel']?.toString() ?? 'Low',
+      description: json['reason']?.toString() ?? json['description']?.toString() ?? '',
+      suggestions: parsedSuggestions,
+    );
+  }
 }
 
 class AssessmentResult {

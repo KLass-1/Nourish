@@ -48,6 +48,9 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
     _selectedGender = 'Male';
   }
 
+  // Loading state for Gemini analysis
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _ageController.dispose();
@@ -57,6 +60,8 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
   }
 
   void _nextStep() {
+    if (_isLoading) return;
+
     if (_currentStep == 1) {
       if (_formKeyStep1.currentState!.validate()) {
         final state = AppStateProvider.of(context);
@@ -74,14 +79,96 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
         _currentStep++;
       });
     } else {
-      // Step 4: Submit
-      final state = AppStateProvider.of(context);
-      state.submitAssessment();
+      // Step 4: Submit for AI analysis
+      _submitAssessment();
+    }
+  }
+
+  Future<void> _submitAssessment() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final state = AppStateProvider.of(context);
+
+    try {
+      await state.submitAssessmentAsync();
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.pushReplacementNamed(context, AppRoutes.assessmentResult);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+
+      final errorMessage = error.toString().replaceFirst('Exception: ', '');
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogCtx) => AlertDialog(
+          backgroundColor: AppTheme.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: AppTheme.warning, size: 24),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Analysis Notice',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            errorMessage,
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppTheme.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                // Fallback to local rule engine so user is never blocked
+                state.submitAssessment();
+                Navigator.pushReplacementNamed(context, AppRoutes.assessmentResult);
+              },
+              child: const Text('Use Offline Estimate', style: TextStyle(color: AppTheme.textSecondary)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                _submitAssessment();
+              },
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   void _prevStep() {
+    if (_isLoading) return;
+
     if (_currentStep > 1) {
       setState(() {
         _currentStep--;
@@ -95,61 +182,121 @@ class _AssessmentFlowScreenState extends State<AssessmentFlowScreen> {
   Widget build(BuildContext context) {
     final state = AppStateProvider.of(context);
     
-    return Scaffold(
-      backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        title: const Text('New Assessment'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: _prevStep,
+    return PopScope(
+      canPop: !_isLoading,
+      child: Scaffold(
+        backgroundColor: AppTheme.background,
+        appBar: AppBar(
+          title: const Text('New Assessment'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: _isLoading ? null : _prevStep,
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
+        body: Stack(
           children: [
-            // Top Static Progress Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: AssessmentProgressBar(
-                currentStep: _currentStep,
-                totalSteps: _totalSteps,
-              ),
-            ),
-            const Divider(),
-
-            // Page content Area
-            Expanded(
-              child: SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: const EdgeInsets.all(20.0),
-                child: _buildStepContent(state),
-              ),
-            ),
-
-            // Bottom Navigation buttons
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
+            SafeArea(
+              child: Column(
                 children: [
-                  if (_currentStep > 1) ...[
-                    Expanded(
-                      child: CustomButton(
-                        text: 'Back',
-                        onPressed: _prevStep,
-                        isSecondary: true,
-                      ),
+                  // Top Static Progress Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    child: AssessmentProgressBar(
+                      currentStep: _currentStep,
+                      totalSteps: _totalSteps,
                     ),
-                    const SizedBox(width: 14),
-                  ],
+                  ),
+                  const Divider(),
+
+                  // Page content Area
                   Expanded(
-                    child: CustomButton(
-                      text: _currentStep == _totalSteps ? 'Submit Assessment' : 'Next Step',
-                      onPressed: _nextStep,
+                    child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.all(20.0),
+                      child: _buildStepContent(state),
+                    ),
+                  ),
+
+                  // Bottom Navigation buttons
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        if (_currentStep > 1) ...[
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Back',
+                              onPressed: _isLoading ? null : _prevStep,
+                              isSecondary: true,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                        ],
+                        Expanded(
+                          child: CustomButton(
+                            text: _isLoading
+                                ? 'Analyzing...'
+                                : (_currentStep == _totalSteps ? 'Submit Assessment' : 'Next Step'),
+                            onPressed: _isLoading ? null : _nextStep,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Loading overlay during Gemini analysis
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.45),
+                child: Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.12),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Analyzing your responses...',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.textPrimary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Connecting with Gemini to estimate potential nutrient gaps.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppTheme.textSecondary,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

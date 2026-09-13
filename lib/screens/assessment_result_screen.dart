@@ -97,6 +97,49 @@ class AssessmentResultScreen extends StatelessWidget {
                                   color: AppTheme.textSecondary,
                                 ),
                               ),
+                              if (deficiency.suggestions.isNotEmpty) ...[
+                                const SizedBox(height: 10),
+                                const Divider(),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Food & Lifestyle Suggestions:',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                ...deficiency.suggestions.map(
+                                  (suggestion) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 4.0),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 6.0),
+                                          child: Icon(
+                                            Icons.circle,
+                                            size: 5,
+                                            color: AppTheme.primary,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            suggestion,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: AppTheme.textSecondary,
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -135,7 +178,7 @@ class AssessmentResultScreen extends StatelessWidget {
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  'This assessment is for general health awareness and does not replace professional medical advice, clinical diagnosis, or laboratory testing.',
+                                  'This is an estimated result based on the information provided and is not a medical diagnosis. It does not replace professional medical advice, clinical diagnosis, or laboratory testing.',
                                   style: TextStyle(
                                     fontSize: 12,
                                     height: 1.4,
