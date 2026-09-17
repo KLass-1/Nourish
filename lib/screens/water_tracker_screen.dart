@@ -11,7 +11,7 @@ class WaterTrackerScreen extends StatelessWidget {
     final state = AppStateProvider.of(context);
     final waterIntake = state.currentWaterIntakeMl;
     final waterGoal = state.waterGoalMl;
-    final progress = state.waterProgress;
+    final rawProgress = state.rawWaterProgress;
 
     // Filter logs for today
     final today = DateTime.now();
@@ -28,6 +28,13 @@ class WaterTrackerScreen extends StatelessWidget {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text('Water Tracker'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restart_alt_rounded),
+            tooltip: 'Reset Today\'s Water',
+            onPressed: () => _confirmReset(context, state),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -63,7 +70,7 @@ class WaterTrackerScreen extends StatelessWidget {
                               width: 176,
                               height: 176,
                               child: CircularProgressIndicator(
-                                value: progress,
+                                value: state.waterProgress,
                                 strokeWidth: 10,
                                 backgroundColor: AppTheme.border,
                                 valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.secondary),
@@ -99,7 +106,7 @@ class WaterTrackerScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  '${(progress * 100).toInt()}%',
+                                  '${(rawProgress * 100).toInt()}%',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: AppTheme.secondary,
@@ -225,7 +232,14 @@ class WaterTrackerScreen extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.delete_outline_rounded, color: AppTheme.error, size: 20),
                                     onPressed: () {
+                                      final removedAmount = log.amountMl;
                                       state.removeWaterLog(log.id);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Removed $removedAmount ml log.'),
+                                          duration: const Duration(seconds: 1),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ],
@@ -241,6 +255,64 @@ class WaterTrackerScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmReset(BuildContext context, AppState state) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: AppTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.restart_alt_rounded, color: AppTheme.secondary, size: 24),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Reset Intake',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to reset today\'s water logs back to 0 ml?',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppTheme.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.secondary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(dialogCtx);
+              state.resetTodayWater();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Today\'s water intake reset to 0 ml.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: const Text('Reset'),
+          ),
+        ],
       ),
     );
   }

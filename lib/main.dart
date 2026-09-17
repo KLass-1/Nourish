@@ -3,11 +3,13 @@ import 'theme/app_theme.dart';
 import 'routes/app_routes.dart';
 import 'state/app_state.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final appState = AppState();
+  await appState.loadSavedData();
   runApp(
     AppStateProvider(
-      notifier: AppState(),
+      notifier: appState,
       child: const NourishApp(),
     ),
   );

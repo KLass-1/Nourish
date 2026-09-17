@@ -3,6 +3,7 @@ import '../models/assessment_model.dart';
 import '../models/water_log_model.dart';
 import '../data/mock_data.dart';
 import '../services/health_check_service.dart';
+import '../services/water_storage_service.dart';
 
 class AppState extends ChangeNotifier {
   // Profile settings
@@ -19,24 +20,20 @@ class AppState extends ChangeNotifier {
   bool offlineMode = false;
 
   // Water Tracker
+  final WaterStorageService _waterStorageService;
   int waterGoalMl = 2500;
   final List<WaterLog> _waterLogs = [];
+  String _lastKnownDate = WaterStorageService.todayDateString;
   
   // Assessment
   final AssessmentAnswers currentAssessment = AssessmentAnswers();
   final List<AssessmentResult> _assessmentHistory = [];
   AssessmentResult? lastAssessmentResult;
 
-  AppState() {
-    // Populate some initial water logs for today
-    final now = DateTime.now();
-    _waterLogs.addAll([
-      WaterLog(id: '1', amountMl: 250, dateTime: now.subtract(const Duration(hours: 6))),
-      WaterLog(id: '2', amountMl: 500, dateTime: now.subtract(const Duration(hours: 4))),
-      WaterLog(id: '3', amountMl: 250, dateTime: now.subtract(const Duration(hours: 2))),
-    ]);
-
+  AppState({WaterStorageService? storageService, bool loadPersistedData = true})
+      : _waterStorageService = storageService ?? WaterStorageService() {
     // Populate a historical assessment result from 2 weeks ago
+    final now = DateTime.now();
     _assessmentHistory.add(
       AssessmentResult(
         dateTime: now.subtract(const Duration(days: 14)),
@@ -54,13 +51,47 @@ class AppState extends ChangeNotifier {
         ],
       ),
     );
+
+    if (loadPersistedData) {
+      loadSavedData();
+    }
+  }
+
+  /// Loads persisted water logs and goal from SharedPreferences
+  Future<void> loadSavedData() async {
+    try {
+      final logs = await _waterStorageService.loadTodayWaterLogs();
+      _waterLogs.clear();
+      _waterLogs.addAll(logs);
+      waterGoalMl = await _waterStorageService.loadWaterGoal();
+      _lastKnownDate = WaterStorageService.todayDateString;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading water data in AppState: $e');
+    }
+  }
+
+  /// Checks if the day has changed while the app was running and resets if so
+  void _checkDailyReset() {
+    final today = WaterStorageService.todayDateString;
+    if (_lastKnownDate != today) {
+      _lastKnownDate = today;
+      _waterLogs.clear();
+      _waterStorageService.resetToday();
+    }
   }
 
   // Getters
-  List<WaterLog> get waterLogs => List.unmodifiable(_waterLogs);
+  List<WaterLog> get waterLogs {
+    _checkDailyReset();
+    return List.unmodifiable(_waterLogs);
+  }
+
   List<AssessmentResult> get assessmentHistory => List.unmodifiable(_assessmentHistory);
 
+  /// Current today's water intake in ml
   int get currentWaterIntakeMl {
+    _checkDailyReset();
     final today = DateTime.now();
     return _waterLogs
         .where((log) =>
@@ -70,29 +101,52 @@ class AppState extends ChangeNotifier {
         .fold(0, (sum, log) => sum + log.amountMl);
   }
 
+  /// Clamped progress (0.0 to 1.0) for visual progress bars
   double get waterProgress {
     if (waterGoalMl <= 0) return 0.0;
     final progress = currentWaterIntakeMl / waterGoalMl;
-    return progress > 1.0 ? 1.0 : progress;
+    return progress > 1.0 ? 1.0 : (progress < 0.0 ? 0.0 : progress);
   }
+
+  /// Unclamped progress for calculating accurate percentage (e.g. 108% if exceeding goal)
+  double get rawWaterProgress {
+    if (waterGoalMl <= 0) return 0.0;
+    return currentWaterIntakeMl / waterGoalMl;
+  }
+
+  int _logCounter = 0;
 
   // Water Tracker Actions
   void addWater(int amountMl) {
-    _waterLogs.add(WaterLog(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    if (amountMl <= 0) return; // Prevent zero or negative intake
+    _checkDailyReset();
+
+    final newLog = WaterLog(
+      id: '${DateTime.now().microsecondsSinceEpoch}_${_logCounter++}',
       amountMl: amountMl,
       dateTime: DateTime.now(),
-    ));
+    );
+    _waterLogs.add(newLog);
+    _waterStorageService.saveTodayWaterLogs(_waterLogs);
     notifyListeners();
   }
 
   void removeWaterLog(String id) {
     _waterLogs.removeWhere((log) => log.id == id);
+    _waterStorageService.saveTodayWaterLogs(_waterLogs);
+    notifyListeners();
+  }
+
+  void resetTodayWater() {
+    _waterLogs.clear();
+    _waterStorageService.resetToday();
     notifyListeners();
   }
 
   void updateWaterGoal(int newGoalMl) {
+    if (newGoalMl <= 0) return; // Guard against non-positive goals
     waterGoalMl = newGoalMl;
+    _waterStorageService.saveWaterGoal(newGoalMl);
     notifyListeners();
   }
 

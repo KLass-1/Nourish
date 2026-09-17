@@ -31,8 +31,9 @@ class HealthCheckService {
       return const [
         'http://127.0.0.1:5000',     // Physical device via adb reverse tcp:5000 tcp:5000
         'http://localhost:5000',     // Localhost
+        'http://10.220.59.114:5000', // Current Wi-Fi LAN IP
         'http://10.0.2.2:5000',      // Android Emulator loopback
-        'http://10.92.103.114:5000', // Wi-Fi LAN IP
+        'http://10.92.103.114:5000', // Alternative Wi-Fi LAN IP
       ];
     }
     return const ['http://localhost:5000', 'http://127.0.0.1:5000'];
@@ -43,7 +44,7 @@ class HealthCheckService {
   /// Resolves the fastest responding backend URL from candidates
   Future<String> resolveBaseUrl() async {
     if (_customBaseUrl != null) {
-      return _customBaseUrl!;
+      return _customBaseUrl;
     }
     if (_cachedWorkingUrl != null) {
       return _cachedWorkingUrl!;
